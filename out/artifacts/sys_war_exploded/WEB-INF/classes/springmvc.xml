@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+
+	<!-- 开启注解扫描：Controller层====作用：把Controller层的类装配到spring容器中，不配置就可以当作一个bean -->
+	<context:component-scan base-package="com.bysj.controller" />
+	
+	<!-- 开启注解驱动/支持 <mvc:annotation-driven/> -->
+	<mvc:annotation-driven>
+	    <mvc:message-converters>
+	        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+	            <property name="supportedMediaTypes">
+	                <list>
+	                    <value>application/json;charset=UTF-8</value>
+	                    <value>text/json;charset=UTF-8</value>
+	                </list>
+	            </property>
+	             <!--引入自定义的ObjectMapper-->
+	            <property name="objectMapper">
+	                <bean class="com.bysj.util.JsonMapper"/>
+	            </property>
+	        </bean>
+	        
+	    </mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<mvc:cors>
+		<mvc:mapping path="/**" />
+	</mvc:cors>
+
+
+	<!-- 配置视图解析器 -->
+	<!-- 配置了视图解析器前后缀以后，访问jsp文件将会自动加上前后缀 -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="xxx"></property><!-- /WEB-INF/jsp/ -->
+		<property name="suffix" value="xxx"></property><!-- .jsp -->
+	</bean>
+    
+	<!-- 放行所有静态资源 -->
+	<mvc:default-servlet-handler/>
+
+	<!-- 配置文件上传解析器  id必须为multipartResolver -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"></property>
+		<!-- <property name="maxUploadSize" value="2097152"></property> -->
+	</bean>
+	<bean class="com.bysj.config.SwaggerConfig" />
+</beans>

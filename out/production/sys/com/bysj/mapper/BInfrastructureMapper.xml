@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.BInfrastructureMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.BInfrastructure" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="infrastructure_name" property="infrastructureName" jdbcType="VARCHAR" />
+        <result column="infrastructure_dis" property="infrastructureDis" jdbcType="VARCHAR" />
+        <result column="photo" property="photo" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,
+        infrastructure_name,
+        infrastructure_dis,
+        photo
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from b_infrastructure
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from b_infrastructure
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.BInfrastructure" >
+        insert into b_infrastructure (
+            id,
+            infrastructure_name,
+            infrastructure_dis,
+            photo
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{infrastructureName,jdbcType=VARCHAR},
+            #{infrastructureDis,jdbcType=VARCHAR},
+            #{photo,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.BInfrastructure" >
+        update b_infrastructure
+        set
+        <trim suffixOverrides="," >
+            infrastructure_name = #{infrastructureName,jdbcType=VARCHAR},
+            infrastructure_dis = #{infrastructureDis,jdbcType=VARCHAR},
+            photo = #{photo,jdbcType=VARCHAR},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap">
+        select *
+        from b_infrastructure
+        <if test="infrastructureName != null and infrastructureName != '' ">
+            where infrastructure_name like CONCAT('%',#{infrastructureName},'%')
+        </if>
+        order by id asc limit #{start},#{limit}
+    </select>
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM b_infrastructure
+        <if test="infrastructureName != null and infrastructureName != '' ">
+            where infrastructure_name like CONCAT('%',#{infrastructureName},'%')
+        </if>
+    </select>
+</mapper>

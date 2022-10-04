@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.UUserMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.UUser" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="uname" property="uname" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+        <result column="photo" property="photo" jdbcType="VARCHAR" />
+        <result column="role" property="role" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,
+        uname,
+        name,
+        pwd,
+        email,
+        phone,
+        id_card,
+        photo,
+        role
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from u_user
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from u_user
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.UUser" >
+        insert into u_user (
+            id,
+            uname,
+            name,
+            pwd,
+            email,
+            phone,
+            id_card,
+            photo,
+            role
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{name,jdbcType=VARCHAR},
+            #{uname,jdbcType=VARCHAR},
+            #{pwd,jdbcType=VARCHAR},
+            #{email,jdbcType=VARCHAR},
+            #{phone,jdbcType=VARCHAR},
+            #{idCard,jdbcType=VARCHAR},
+            #{photo,jdbcType=VARCHAR},
+            #{role,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.UUser" >
+        update u_user
+        set
+        <trim suffixOverrides="," >
+            uname = #{uname,jdbcType=VARCHAR},
+            name = #{name,jdbcType=VARCHAR},
+            pwd = #{pwd,jdbcType=VARCHAR},
+            email = #{email,jdbcType=VARCHAR},
+            phone = #{phone,jdbcType=VARCHAR},
+            id_card = #{idCard,jdbcType=VARCHAR},
+            photo = #{photo,jdbcType=VARCHAR},
+            role = #{role,jdbcType=INTEGER},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap">
+        select *
+        from u_user
+        where 1=1
+        <if test="role>-1">
+            and role = #{role,jdbcType=INTEGER}
+        </if>
+        <if test="name != null and name != '' ">
+            and name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="idCard != null and idCard != '' ">
+            and id_card like CONCAT('%',#{idCard},'%')
+        </if>
+        <if test="phone != null and phone != '' ">
+            and phone like CONCAT('%',#{phone},'%')
+        </if>
+        order by u_user.id asc limit  #{start},#{limit}
+    </select>
+
+    <select id="getTotal"  resultType="Integer">
+        SELECT count(*)
+        from u_user
+        where 1=1
+        <if test="role>-1">
+            and role = #{role,jdbcType=INTEGER}
+        </if>
+        <if test="name != null and name != '' ">
+            and name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="idCard != null and idCard != '' ">
+            and id_card like CONCAT('%',#{idCard},'%')
+        </if>
+        <if test="phone != null and phone != '' ">
+            and phone like CONCAT('%',#{phone},'%')
+        </if>
+    </select>
+
+    <select id="selectByLogin" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from u_user
+        where
+        uname = #{name}
+
+    </select>
+
+</mapper>

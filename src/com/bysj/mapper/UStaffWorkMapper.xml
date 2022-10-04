@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.UStaffWorkMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.UStaffWork" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="staff_id" property="staffId" jdbcType="INTEGER" />
+        <result column="work_content" property="workContent" jdbcType="VARCHAR" />
+        <result column="work_bengin_time" property="workBenginTime" jdbcType="TIMESTAMP" />
+        <result column="work_end_time" property="workEndTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.bysj.dto.UStaffWorkDTO" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="staff_id" property="staffId" jdbcType="INTEGER" />
+        <result column="work_content" property="workContent" jdbcType="VARCHAR" />
+        <result column="work_bengin_time" property="workBenginTime" jdbcType="TIMESTAMP" />
+        <result column="work_end_time" property="workEndTime" jdbcType="TIMESTAMP" />
+        <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        staff_id,
+        work_content,
+        work_bengin_time,
+        work_end_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from u_staff_work
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from u_staff_work
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.UStaffWork" >
+        insert into u_staff_work (
+            id,
+            staff_id,
+            work_content,
+            work_bengin_time,
+            work_end_time
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{staffId,jdbcType=INTEGER},
+            #{workContent,jdbcType=VARCHAR},
+            #{workBenginTime,jdbcType=TIMESTAMP},
+            #{workEndTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.UStaffWork" >
+        update u_staff_work
+        set
+        <trim suffixOverrides="," >
+            staff_id = #{staffId,jdbcType=INTEGER},
+            work_content = #{workContent,jdbcType=VARCHAR},
+            work_bengin_time = #{workBenginTime,jdbcType=TIMESTAMP},
+            work_end_time = #{workEndTime,jdbcType=TIMESTAMP},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap2">
+        select u_staff_work.*,u_staff.name as staff_name
+        from u_staff_work left join u_staff on u_staff.id = u_staff_work.staff_id
+        where 1=1
+        <if test="workContent != null and workContent != '' ">
+            and u_staff_work.work_content like CONCAT('%',#{workContent},'%')
+        </if>
+        <if test="staffName != null and staffName != '' ">
+            and u_staff.name like CONCAT('%',#{staffName},'%')
+        </if>
+        <if test="beginTime != null and beginTime != '' ">
+            and u_staff_work.work_bengin_time  &gt;= CONCAT(#{beginTime},' 00:00:00')
+        </if>
+        <if test="endTime != null and endTime != '' ">
+            and u_staff_work.work_end_time &lt;= CONCAT(#{endTime},' 23:59:59')
+        </if>
+        order by u_staff_work.id asc  limit  #{start},#{limit}
+    </select>
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM u_staff_work left join u_staff on u_staff.id = u_staff_work.staff_id
+      where 1=1
+        <if test="workContent != null and workContent != '' ">
+            and u_staff_work.work_content like CONCAT('%',#{workContent},'%')
+        </if>
+        <if test="staffName != null and staffName != '' ">
+            and u_staff.name like CONCAT('%',#{staffName},'%')
+        </if>
+        <if test="beginTime != null and beginTime != '' ">
+            and u_staff_work.work_bengin_time  &gt;= CONCAT(#{beginTime},' 00:00:00')
+        </if>
+        <if test="endTime != null and endTime != '' ">
+            and u_staff_work.work_end_time &lt;= CONCAT(#{endTime},' 23:59:59')
+        </if>
+    </select>
+</mapper>

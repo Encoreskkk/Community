@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.BBuildMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.BBuild" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="build_name" property="buildName" jdbcType="VARCHAR" />
+        <result column="build_address" property="buildAddress" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,
+        build_name,
+        build_address
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from b_build
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from b_build
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.BBuild" >
+        insert into b_build (
+            id,
+            build_name,
+            build_address
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{buildName,jdbcType=VARCHAR},
+            #{buildAddress,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.BBuild" >
+        update b_build
+        set
+        <trim suffixOverrides="," >
+            build_name = #{buildName,jdbcType=VARCHAR},
+            build_address = #{buildAddress,jdbcType=VARCHAR},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap">
+        select *
+        from b_build
+        <if test="buildName != null and buildName != '' ">
+        where build_name like CONCAT('%',#{buildName},'%')
+        </if>
+        order by id asc limit #{start},#{limit}
+    </select>
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM b_build
+        <if test="buildName != null and buildName != '' ">
+        where build_name like CONCAT('%',#{buildName},'%')
+        </if>
+    </select>
+</mapper>

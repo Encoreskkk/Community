@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.BParkMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.BPark" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="park_bm" property="parkBm" jdbcType="VARCHAR" />
+        <result column="park_address" property="parkAddress" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,
+        park_bm,
+        park_address,
+        state
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from b_park
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from b_park
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.BPark" >
+        insert into b_park (
+            id,
+            park_bm,
+            park_address,
+            state
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{parkBm,jdbcType=VARCHAR},
+            #{parkAddress,jdbcType=VARCHAR},
+            #{state,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.BPark" >
+        update b_park
+        set
+        <trim suffixOverrides="," >
+            park_bm = #{parkBm,jdbcType=VARCHAR},
+            park_address = #{parkAddress,jdbcType=VARCHAR},
+            state = #{state,jdbcType=INTEGER},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap">
+        select *
+        from b_park
+        <if test="parkBm != null and parkBm != '' ">
+            where park_bm like CONCAT('%',#{parkBm},'%')
+        </if>
+        order by id asc limit #{start},#{limit}
+    </select>
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM b_park
+        <if test="parkBm != null and parkBm != '' ">
+            where park_bm like CONCAT('%',#{parkBm},'%')
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.UUserRoomMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.UUserRoom" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="u_id" property="uId" jdbcType="INTEGER" />
+        <result column="room_id" property="roomId" jdbcType="INTEGER" />
+        <result column="if_in" property="ifIn" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.bysj.dto.UUserRoomDTO" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="u_id" property="uId" jdbcType="INTEGER" />
+        <result column="room_id" property="roomId" jdbcType="INTEGER" />
+        <result column="if_in" property="ifIn" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+        <result column="photo" property="photo" jdbcType="VARCHAR" />
+        <result column="floor_bm" property="floorBm" jdbcType="VARCHAR" />
+        <result column="floor_dis" property="floorDis" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="DECIMAL" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        u_id,
+        room_id,
+        if_in
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from u_user_room
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from u_user_room
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.UUserRoom" >
+        insert into u_user_room (
+            id,
+            u_id,
+            room_id,
+            if_in
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{uId,jdbcType=INTEGER},
+            #{roomId,jdbcType=INTEGER},
+            #{ifIn,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.UUserRoom" >
+        update u_user_room
+        set
+        <trim suffixOverrides="," >
+            u_id = #{uId,jdbcType=INTEGER},
+            room_id = #{roomId,jdbcType=INTEGER},
+            if_in = #{ifIn,jdbcType=INTEGER},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap2">
+        select u_user_room.*,u_user.name,u_user.phone,u_user.id_card,u_user.photo,u_user.email,b_room.floor_bm,b_room.floor_dis,b_room.area
+        from u_user_room LEFT join u_user on u_user.role=0 and u_user.id= u_user_room.u_id
+        LEFT JOIN b_room ON u_user_room.room_id=b_room.id
+        where 1=1
+        <if test="uId > 0">
+            and u_user_room.u_id = #{uId}
+        </if>
+        <if test="name != null and name != '' ">
+            and u_user.name like CONCAT('%',#{name},'%')
+        </if>
+        order by u_user_room.id asc limit  #{start},#{limit}
+    </select>
+
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM u_user_room
+      LEFT join u_user on u_user.role=0 and u_user.id= u_user_room.u_id
+      LEFT JOIN b_room ON u_user_room.room_id=b_room.id
+        where 1=1
+        <if test="uId > 0">
+            and u_user_room.u_id = #{uId}
+        </if>
+        <if test="name != null and name != '' ">
+            and u_user.name like CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+    <select id="selectByRat" resultMap="BaseResultMap">
+        select *
+        from u_user_room
+        where   u_id = #{uId,jdbcType=INTEGER} and
+                room_id = #{roomId,jdbcType=INTEGER}
+    </select>
+
+</mapper>

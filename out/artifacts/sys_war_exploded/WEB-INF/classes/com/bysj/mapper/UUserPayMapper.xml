@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.UUserPayMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.UUserPay" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="u_id" property="uId" jdbcType="INTEGER" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="pay_amout" property="payAmout" jdbcType="DECIMAL" />
+        <result column="pay_item" property="payItem" jdbcType="LONGVARCHAR" />
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.bysj.dto.UUserPayDTO" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="u_id" property="uId" jdbcType="INTEGER" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="pay_amout" property="payAmout" jdbcType="DECIMAL" />
+        <result column="pay_item" property="payItem" jdbcType="LONGVARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        u_id,
+        pay_time,
+        pay_amout,
+        pay_item
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from u_user_pay
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from u_user_pay
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.UUserPay" >
+        insert into u_user_pay (
+            id,
+            u_id,
+            pay_time,
+            pay_amout,
+            pay_item
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{uId,jdbcType=INTEGER},
+            #{payTime,jdbcType=TIMESTAMP},
+            #{payAmout,jdbcType=DECIMAL},
+            #{payItem,jdbcType=LONGVARCHAR}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.UUserPay" >
+        update u_user_pay
+        set
+        <trim suffixOverrides="," >
+            u_id = #{uId,jdbcType=INTEGER},
+            pay_time = #{payTime,jdbcType=TIMESTAMP},
+            pay_amout = #{payAmout,jdbcType=DECIMAL},
+            pay_item = #{payItem,jdbcType=LONGVARCHAR},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap2">
+        select u_user_pay.*,u_user.name,u_user.phone,u_user.id_card,u_user.photo,u_user.email
+        from u_user_pay LEFT join u_user on u_user.role=0 and u_user.id= u_user_pay.u_id
+        where 1=1
+        <if test="uId > 0">
+            and u_user_pay.u_id = #{uId}
+        </if>
+        <if test="name != null and name != '' ">
+            and u_user.name like CONCAT('%',#{name},'%')
+        </if>
+        order by u_user_pay.id asc limit  #{start},#{limit}
+    </select>
+
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*)
+      from u_user_pay LEFT join u_user on u_user.role=0 and u_user.id= u_user_pay.u_id
+        where 1=1
+        <if test="uId > 0">
+            and u_user_pay.u_id = #{uId}
+        </if>
+        <if test="name != null and name != '' ">
+            and u_user.name like CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+</mapper>

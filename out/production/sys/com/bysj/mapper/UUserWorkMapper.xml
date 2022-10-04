@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.UUserWorkMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.UUserWork" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="u_id" property="uId" jdbcType="INTEGER" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="memo" property="memo" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="if_aduit" property="ifAduit" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.bysj.dto.UUserWorkDTO" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="u_id" property="uId" jdbcType="INTEGER" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="memo" property="memo" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="if_aduit" property="ifAduit" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+        <result column="photo" property="photo" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        u_id,
+        content,
+        memo,
+        create_time,
+        if_aduit
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from u_user_work
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from u_user_work
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.UUserWork" >
+        insert into u_user_work (
+            id,
+            u_id,
+            content,
+            memo,
+            create_time,
+            if_aduit
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{uId,jdbcType=INTEGER},
+            #{content,jdbcType=VARCHAR},
+            #{memo,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{ifAduit,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.UUserWork" >
+        update u_user_work
+        set
+        <trim suffixOverrides="," >
+            u_id = #{uId,jdbcType=INTEGER},
+            content = #{content,jdbcType=VARCHAR},
+            memo = #{memo,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            if_aduit = #{ifAduit,jdbcType=INTEGER},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap2">
+        select u_user_work.*,u_user.name,u_user.phone,u_user.id_card,u_user.photo,u_user.email
+        from u_user_work LEFT join u_user on u_user.role=0 and u_user.id= u_user_work.u_id
+        where 1=1
+        <if test="uId > 0">
+            and u_user_work.u_id = #{uId}
+        </if>
+        <if test="name != null and name != '' ">
+            and u_user.name like CONCAT('%',#{name},'%')
+        </if>
+        order by u_user_work.id asc limit  #{start},#{limit}
+    </select>
+    <select id="getTotal"  resultType="Integer">
+        SELECT count(*)
+        from u_user_work LEFT join u_user on u_user.role=0 and u_user.id= u_user_work.u_id
+        where 1=1
+        <if test="uId > 0">
+            and u_user_work.u_id = #{uId}
+        </if>
+        <if test="name != null and name != '' ">
+            and u_user.name like CONCAT('%',#{name},'%')
+        </if>
+    </select>
+</mapper>

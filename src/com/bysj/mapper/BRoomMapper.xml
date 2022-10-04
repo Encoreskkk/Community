@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.BRoomMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.BRoom" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="floor_bm" property="floorBm" jdbcType="VARCHAR" />
+        <result column="floor_dis" property="floorDis" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="DECIMAL" />
+        <result column="build_id" property="buildId" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.bysj.dto.BRoomDTO" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="floor_bm" property="floorBm" jdbcType="VARCHAR" />
+        <result column="floor_dis" property="floorDis" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="DECIMAL" />
+        <result column="build_id" property="buildId" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="build_name" property="buildName" jdbcType="VARCHAR" />
+        <result column="build_address" property="buildAddress" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        floor_bm,
+        floor_dis,
+        area,
+        build_id,
+        state
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from b_room
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from b_room
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.BRoom" >
+        insert into b_room (
+            id,
+            floor_bm,
+            floor_dis,
+            area,
+            build_id,
+            state
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{floorBm,jdbcType=VARCHAR},
+            #{floorDis,jdbcType=VARCHAR},
+            #{area,jdbcType=DECIMAL},
+            #{buildId,jdbcType=INTEGER},
+            #{state,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.BRoom" >
+        update b_room
+        set
+        <trim suffixOverrides="," >
+            floor_bm = #{floorBm,jdbcType=VARCHAR},
+            floor_dis = #{floorDis,jdbcType=VARCHAR},
+            area = #{area,jdbcType=DECIMAL},
+            build_id = #{buildId,jdbcType=INTEGER},
+            state = #{state,jdbcType=INTEGER},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap2">
+        select b_room.*,
+            b_build.build_name,
+            b_build.build_address
+        from b_room
+        left join b_build on b_build.id = b_room.build_id
+        <if test="floorBm != null and floorBm != '' ">
+            where  b_room.floor_bm like CONCAT('%',#{floorBm},'%')
+        </if>
+        order by b_room.id asc limit #{start},#{limit}
+    </select>
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*)
+      FROM b_room
+      left join b_build on b_build.id = b_room.build_id
+        <if test="floorBm != null and floorBm != '' ">
+            where  b_room.floor_bm like CONCAT('%',#{floorBm},'%')
+        </if>
+    </select>
+</mapper>

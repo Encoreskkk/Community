@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.UUserParkMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.UUserPark" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="u_id" property="uId" jdbcType="INTEGER" />
+        <result column="park_id" property="parkId" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.bysj.dto.UUserParkDTO" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="u_id" property="uId" jdbcType="INTEGER" />
+        <result column="park_id" property="parkId" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+        <result column="photo" property="photo" jdbcType="VARCHAR" />
+        <result column="park_bm" property="parkBm" jdbcType="VARCHAR" />
+        <result column="park_address" property="parkAddress" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        u_id,
+        park_id
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from u_user_park
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from u_user_park
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.UUserPark" >
+        insert into u_user_park (
+            id,
+            u_id,
+            park_id
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{uId,jdbcType=INTEGER},
+            #{parkId,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.UUserPark" >
+        update u_user_park
+        set
+        <trim suffixOverrides="," >
+            u_id = #{uId,jdbcType=INTEGER},
+            park_id = #{parkId,jdbcType=INTEGER},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap2">
+        select u_user_park.*,u_user.name,u_user.phone,u_user.id_card,u_user.photo,u_user.email,b_park.park_bm,b_park.park_address
+        from u_user_park LEFT join u_user on u_user.role=0 and u_user.id= u_user_park.u_id
+        LEFT JOIN b_park on u_user_park.park_id = b_park.id
+        where 1=1
+        <if test="uId > 0">
+            and u_user_park.u_id = #{uId}
+        </if>
+        <if test="name != null and name != '' ">
+            and u_user.name like CONCAT('%',#{name},'%')
+        </if>
+        order by u_user_park.id asc limit  #{start},#{limit}
+    </select>
+
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM u_user_park
+      LEFT join u_user on u_user.role=0 and u_user.id= u_user_park.u_id
+      LEFT JOIN b_park on u_user_park.park_id = b_park.id
+        where 1=1
+        <if test="uId > 0">
+            and u_user_park.u_id = #{uId}
+        </if>
+        <if test="name != null and name != '' ">
+            and u_user.name like CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+    <select id="selectByRat" resultMap="BaseResultMap">
+        select *
+        from u_user_park
+        where   u_id = #{uId,jdbcType=INTEGER} and
+                park_id = #{parkId,jdbcType=INTEGER}
+    </select>
+
+</mapper>

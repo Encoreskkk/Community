@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.BServiceMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.BService" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="service_name" property="serviceName" jdbcType="VARCHAR" />
+        <result column="service_price" property="servicePrice" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,
+        service_name,
+        service_price
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from b_service
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from b_service
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.BService" >
+        insert into b_service (
+            id,
+            service_name,
+            service_price
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{serviceName,jdbcType=VARCHAR},
+            #{servicePrice,jdbcType=DECIMAL}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.BService" >
+        update b_service
+        set
+        <trim suffixOverrides="," >
+            service_name = #{serviceName,jdbcType=VARCHAR},
+            service_price = #{servicePrice,jdbcType=DECIMAL},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap">
+        select *
+        from b_service
+        <if test="serviceName != null and serviceName != '' ">
+            where service_name like CONCAT('%',#{serviceName},'%')
+        </if>
+        order by id asc limit #{start},#{limit}
+    </select>
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM b_service
+        <if test="serviceName != null and serviceName != '' ">
+            where service_name like CONCAT('%',#{serviceName},'%')
+        </if>
+    </select>
+</mapper>

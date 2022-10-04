@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bysj.dao.BGoodMapper" >
+    <resultMap id="BaseResultMap" type="com.bysj.model.BGood" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="good" property="good" jdbcType="VARCHAR" />
+        <result column="num" property="num" jdbcType="INTEGER" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="in_datetime" property="inDatetime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,
+        good,
+        num,
+        price,
+        in_datetime
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from b_good
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </select>
+
+    <delete id="deleteByPrimaryKey" >
+        delete from b_good
+        where
+        id = #{id,jdbcType=INTEGER}
+        
+    </delete>
+
+
+    <insert id="insert" parameterType="com.bysj.model.BGood" >
+        insert into b_good (
+            id,
+            good,
+            num,
+            price,
+            in_datetime
+        )
+        values (
+            #{id,jdbcType=INTEGER},
+            #{good,jdbcType=VARCHAR},
+            #{num,jdbcType=INTEGER},
+            #{price,jdbcType=DECIMAL},
+            #{inDatetime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.bysj.model.BGood" >
+        update b_good
+        set
+        <trim suffixOverrides="," >
+            good = #{good,jdbcType=VARCHAR},
+            num = #{num,jdbcType=INTEGER},
+            price = #{price,jdbcType=DECIMAL},
+            in_datetime = #{inDatetime,jdbcType=TIMESTAMP},
+        </trim>
+        where
+        id = #{id,jdbcType=INTEGER}
+            
+    </update>
+
+    <select id="loadModels" resultMap="BaseResultMap">
+        select *
+        from b_good
+        <if test="good != null and good != '' ">
+            where good like CONCAT('%',#{good},'%')
+        </if>
+        order by id asc limit #{start},#{limit}
+    </select>
+    <select id="getTotal"  resultType="Integer">
+      SELECT count(*) FROM b_good
+        <if test="good != null and good != '' ">
+            where good like CONCAT('%',#{good},'%')
+        </if>
+    </select>
+</mapper>
